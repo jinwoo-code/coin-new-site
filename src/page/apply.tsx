@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styled, { css } from 'styled-components';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '../supabaseClient'; // Supabase 클라이언트 임포트
 
 const colors = {
   bg: '#050505',
@@ -186,6 +187,10 @@ const SubmitButton = styled(motion.button)`
   cursor: pointer;
   margin-top: 2rem;
   box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 `;
 
 const BackButton = styled.button`
@@ -203,6 +208,7 @@ const BackButton = styled.button`
 
 const ApplyPage = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false); // 로딩 상태 추가
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
@@ -228,10 +234,66 @@ const ApplyPage = () => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    alert('지원서가 제출되었습니다. 감사합니다!');
-    navigate('/');
+    setLoading(true);
+
+    try {
+      let portfolioUrl = '';
+
+      // 1. 파일 업로드 (선택사항)
+      if (file) {
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${Math.random()}.${fileExt}`;
+        const filePath = `${fileName}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from('portfolios')
+          .upload(filePath, file);
+
+        if (uploadError) {
+          throw uploadError;
+        }
+
+        // 공개 URL 가져오기
+        const { data: { publicUrl } } = supabase.storage
+          .from('portfolios')
+          .getPublicUrl(filePath);
+        
+        portfolioUrl = publicUrl;
+      }
+
+      // 2. DB 데이터 저장
+      const { error: dbError } = await supabase
+        .from('applications')
+        .insert([
+          {
+            name: formData.name,
+            phone: formData.phone,
+            dept: formData.department,
+            student_id: formData.studentId,
+            grade: formData.grade,
+            interest: [formData.interest], // 배열 형태로 저장
+            motivation: formData.motivation,
+            experience: formData.experience,
+            portfolio_url: portfolioUrl,
+            availability: formData.availability,
+            // additional은 필요시 DB 컬럼 추가 후 연결 가능
+          },
+        ]);
+
+      if (dbError) {
+        throw dbError;
+      }
+
+      alert('지원서가 성공적으로 제출되었습니다. 감사합니다!');
+      navigate('/');
+    } catch (error: any) {
+      console.error('Error submitting application:', error);
+      alert(`제출 중 오류가 발생했습니다: ${error.message || error.error_description || '알 수 없는 에러'}`);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -303,7 +365,7 @@ const ApplyPage = () => {
             </FormGroup>
 
             <FormGroup>
-              <Label>포트폴리오 제출</Label>
+              <Label>포트폴리오 제출 (파일 선택)</Label>
               <FileInputWrapper>
                 <FakeFileInput>
                   {file ? file.name : '파일을 선택하거나 여기로 드래그하세요'}
@@ -333,8 +395,9 @@ const ApplyPage = () => {
               whileHover={{ scale: 1.01 }}
               whileTap={{ scale: 0.99 }}
               type="submit"
+              disabled={loading}
             >
-              지원서 제출하기
+              {loading ? '제출 중...' : '지원서 제출하기'}
             </SubmitButton>
           </form>
         </FormContainer>
