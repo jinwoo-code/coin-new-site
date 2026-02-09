@@ -40,7 +40,7 @@ const GlobalWrapper = styled.div`
 `;
 
 const Container = styled.div<{ wide?: boolean }>`
-  max-width: ${props => props.wide ? '1300px' : '1300px'}; /* 일반 섹션은 1300px, 연혁은 1600px */
+  max-width: ${props => props.wide ? '1600px' : '1300px'};
   margin: 0 auto;
   padding: 0 2rem;
   width: 100%;
@@ -168,7 +168,7 @@ const Grid = styled(motion.div)<{ columns?: number }>`
 const Card = styled(motion.div)`
   background: ${colors.bgSecondary};
   border: 1px solid ${colors.border};
-  padding: 2.5rem; /* 일반 섹션 카드 패딩 축소 */
+  padding: 2.5rem; 
   border-radius: 20px;
   transition: all 0.3s ease;
   height: 100%;
@@ -181,7 +181,7 @@ const Card = styled(motion.div)`
   li::before { content: '• '; color: ${colors.primary}; font-weight: bold; }
 `;
 
-// --- Timeline (Maximized for History Only) ---
+// --- Timeline ---
 const TimelineContainer = styled.div`
   position: relative;
   width: 100%;
@@ -196,7 +196,6 @@ const TimelineTrack = styled.div`
   width: 2px;
   background: ${colors.border};
   transform: translateX(-50%);
-  
   @media (max-width: 768px) { left: 20px; }
 `;
 
@@ -206,11 +205,7 @@ const TimelineItemStyled = styled(motion.div)<{ isLeft: boolean }>`
   padding-bottom: 3.5rem;
   width: 100%;
   position: relative;
-
-  @media (max-width: 768px) {
-    justify-content: flex-start;
-    padding-left: 50px;
-  }
+  @media (max-width: 768px) { justify-content: flex-start; padding-left: 50px; }
 `;
 
 const TimelineDot = styled.div`
@@ -225,37 +220,37 @@ const TimelineDot = styled.div`
   transform: translateX(-50%);
   z-index: 2;
   box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
-
   @media (max-width: 768px) { left: 20px; }
 `;
 
 const TimelineContent = styled.div`
-  width: 48.5%; /* 교차 스타일 내 가로 최대화 */
+  width: 48.5%;
   background: ${colors.bgSecondary};
   border: 1px solid ${colors.border};
-  padding: 2.5rem 3.5rem; /* 연혁 카드는 넓은 패딩 유지 */
+  padding: 2.5rem 3.5rem;
   border-radius: 20px;
   position: relative;
   transition: all 0.3s;
-
   &:hover { border-color: ${colors.primary}; transform: translateY(-3px); }
-
   .year { font-size: 2rem; font-weight: 800; color: ${colors.primary}; margin-bottom: 1.2rem; }
-  
   .item-list { display: flex; flex-direction: column; gap: 0.8rem; }
-  .item { 
-    color: ${colors.textMuted}; 
-    font-size: 1.1rem; 
-    line-height: 1.5; 
-    display: flex; 
-    gap: 0.6rem; 
-    align-items: flex-start;
-    word-break: keep-all; 
-  }
+  .item { color: ${colors.textMuted}; font-size: 1.1rem; line-height: 1.5; display: flex; gap: 0.6rem; align-items: flex-start; word-break: keep-all; }
   .item::before { content: '•'; color: ${colors.primary}; font-weight: bold; margin-top: 2px; }
-
   @media (max-width: 768px) { width: 100%; }
 `;
+
+// --- Map Component (Commented out until API is ready) ---
+/*
+const MapContainer = styled.div`
+  width: 100%;
+  height: 450px;
+  border-radius: 24px;
+  margin-top: 4rem;
+  border: 1px solid ${colors.border};
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+`;
+*/
 
 const scrollToSection = (id: string) => {
   document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
@@ -382,7 +377,7 @@ const Recruitment = () => {
           <h3 style={{ textAlign: 'center', marginBottom: '4rem', fontSize: '2.2rem', fontWeight: 800 }}>Selection Process</h3>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '3rem', position: 'relative' }}>
             {[
-              { n: '1', t: '구글폼 지원', s: '1차 서류 지원' },
+              { n: '1', t: '지원서 제출', s: '1차 서류 지원' },
               { n: '2', t: '임원 면접', s: '2차 오프라인 면접' },
               { n: '3', t: '최종 합격', s: 'Coin의 새로운 부원' }
             ].map(step => (
@@ -420,7 +415,7 @@ const History = () => {
 
   return (
     <Section id="history" ref={ref}>
-      <Container wide> {/* 연혁 섹션만 Wide 컨테이너 적용 */}
+      <Container wide> 
         <SectionHeader initial="hidden" animate={isVisible ? 'visible' : 'hidden'} variants={fadeIn}>
           <h2>Coin의 <span>연혁</span></h2>
           <p>우리가 걸어온 길입니다.</p>
@@ -456,6 +451,31 @@ const History = () => {
 const Contact = () => {
   const navigate = useNavigate();
   const [ref, isVisible] = useScrollAnimation(0.2);
+
+  /*
+  useEffect(() => {
+    const { kakao } = window as any;
+    if (!kakao || !kakao.maps) return;
+
+    const container = document.getElementById('map');
+    const options = {
+      center: new kakao.maps.LatLng(37.3402, 126.7335),
+      level: 3
+    };
+
+    const map = new kakao.maps.Map(container, options);
+    const markerPosition = new kakao.maps.LatLng(37.3402, 126.7335);
+    const marker = new kakao.maps.Marker({ position: markerPosition });
+    marker.setMap(map);
+
+    const mapTypeControl = new kakao.maps.MapTypeControl();
+    map.addControl(mapTypeControl, kakao.maps.ControlPosition.TOPRIGHT);
+
+    const zoomControl = new kakao.maps.ZoomControl();
+    map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
+  }, []);
+  */
+
   return (
     <Section id="contact" ref={ref}>
       <Container style={{ textAlign: 'center', alignItems: 'center' }}>
@@ -466,8 +486,12 @@ const Contact = () => {
             (경기도 시흥시 경기과기대로 270)
           </p>
         </SectionHeader>
+
+        {/* <motion.div initial="hidden" animate={isVisible ? 'visible' : 'hidden'} variants={fadeIn} style={{ width: '100%', maxWidth: '1000px' }}>
+          <MapContainer id="map" />
+        </motion.div> */}
         
-        <motion.div initial="hidden" animate={isVisible ? 'visible' : 'hidden'} variants={fadeIn} style={{ marginTop: '4rem', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <motion.div initial="hidden" animate={isVisible ? 'visible' : 'hidden'} variants={fadeIn} style={{ marginTop: '6rem', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <h3 style={{ fontSize: '2.2rem', marginBottom: '1.5rem', fontWeight: 800 }}>'Coin'과 함께하고 싶나요?</h3>
           <p style={{ color: colors.textMuted, maxWidth: '750px', margin: '0 auto 4rem', lineHeight: 1.6, fontSize: '1.15rem' }}>'Coin'은 열정 가득한 당신의 합류를 기다립니다. 기술에 대한 관심과 배우고자 하는 의지만 있다면 누구든 환영합니다!</p>
           <PrimaryButton onClick={() => navigate('/apply')}>지금 가입하기</PrimaryButton>

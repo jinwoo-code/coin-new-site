@@ -306,7 +306,7 @@ const ApplyPage = () => {
         >
           <BackButton onClick={() => navigate('/')}>← 메인으로 돌아가기</BackButton>
           <Title>COIN 지원하기</Title>
-          <Subtitle>2025년 COIN과 함께 성장할 열정적인 분들을 기다립니다.</Subtitle>
+          <Subtitle>2026년 COIN과 함께 성장할 열정적인 분들을 기다립니다.</Subtitle>
 
           <form onSubmit={handleSubmit}>
             <FormRow>
@@ -327,7 +327,7 @@ const ApplyPage = () => {
               </FormGroup>
               <FormGroup>
                 <Label>학번</Label>
-                <Input name="studentId" placeholder="202500000" required value={formData.studentId} onChange={handleChange} />
+                <Input name="studentId" placeholder="202600000" required value={formData.studentId} onChange={handleChange} />
               </FormGroup>
             </FormRow>
 
