@@ -287,7 +287,6 @@ const Navbar = () => {
 };
 
 const Hero = () => {
-  const navigate = useNavigate();
   const [awardsRef, awardsCount] = useCountUp(26);
   const [patentsRef, patentsCount] = useCountUp(4);
   const [yearsRef, yearsCount] = useCountUp(14);
@@ -297,8 +296,8 @@ const Hero = () => {
       <Container>
         <HeroContent initial="hidden" animate="visible" variants={fadeIn}>
           <div className="brand">COIN</div>
-          <h1>2025 RECRUITING</h1>
-          <p className="sub">2025 COIN 동아리 신입 부원 모집. 경기과학기술대학교 최고의 프로그래밍 동아리에서 당신의 상상을 현실로 만드세요.</p>
+          <h1>2026 RECRUITING</h1>
+          <p className="sub">2026 COIN 동아리 신입 부원 모집. 경기과학기술대학교 최고의 프로그래밍 동아리에서 당신의 상상을 현실로 만드세요.</p>
           <PrimaryButton onClick={() => scrollToSection('recruitment')}>지금 지원하기</PrimaryButton>
 
           <StatsWrapper variants={staggerContainer} initial="hidden" animate="visible">
