@@ -1,24 +1,17 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { Routes, Route } from 'react-router-dom';
+import Main from './page/main';
+import ApplyPage from './page/apply';
+import './index.css'; // ★ 전역 스타일을 여기서 import 합니다.
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Routes>
+        <Route path="/" element={<Main />} />
+        <Route path="/apply" element={<ApplyPage />} />
+        {/* 다른 라우트가 있다면 여기에 추가 */}
+      </Routes>
     </div>
   );
 }
